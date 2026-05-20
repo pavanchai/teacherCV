@@ -1,0 +1,4 @@
+{
+  "buildCommand": "npm run db:deploy && next build",
+  "framework": "nextjs"
+}

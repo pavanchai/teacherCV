@@ -1,7 +1,28 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --no-turbopack --yes)"
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --no-turbopack --yes)",
+      "Bash(npm install *)",
+      "Bash(npx prisma *)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:3000/)",
+      "Bash(curl -s http://localhost:3000/api/stats)",
+      "Bash(curl *)",
+      "Bash(npx tsx *)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'{len\\(d\\)} positions: {[p[\\\\\"title\\\\\"] for p in d]}'\\)\")",
+      "Bash(node *)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); [print\\(p['id'], p['title']\\) for p in d[:3]]\")",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); [print\\(s['position']['title'], '| budgetCtc:', s['position'].get\\('budgetCtc'\\)\\) for s in d[:3]]\")",
+      "Bash(sqlite3 *)",
+      "Bash(PORT=3001 npm run dev)",
+      "Bash(echo \"PID: $!\")",
+      "Bash(kill 6792)",
+      "Bash(PORT=3000 npm run dev)",
+      "Bash(echo \"new PID: $!\")",
+      "Bash(npm list *)",
+      "Bash(git add *)"
     ]
   }
 }

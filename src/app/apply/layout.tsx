@@ -1,27 +1,23 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
-import { Sidebar } from "@/components/layout/sidebar";
+import "../globals.css";
 import { ToastProvider } from "@/components/ui/toast";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "TeacherCV — CBSE Shortlisting Portal",
-  description: "AI-powered teacher CV evaluation and shortlisting platform for CBSE schools",
+  title: "Apply for Teaching Position",
+  description: "Submit your CV and profile for evaluation",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function ApplyLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} bg-slate-50 dark:bg-slate-950 min-h-screen transition-colors duration-300`}>
         <ThemeProvider>
           <ToastProvider>
-            <div className="flex h-screen overflow-hidden">
-              <Sidebar />
-              <main className="flex-1 overflow-y-auto">{children}</main>
-            </div>
+            {children}
           </ToastProvider>
         </ThemeProvider>
       </body>

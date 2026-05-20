@@ -1,0 +1,167 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Organization {
+  id          String      @id @default(cuid())
+  name        String
+  email       String      @unique
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  positions   Position[]
+  candidates  Candidate[]
+  shortlists  Shortlist[]
+}
+
+model Position {
+  id               String       @id @default(cuid())
+  title            String
+  subject          String
+  gradeLevel       String
+  description      String?
+  requirements     String
+  minQualification String
+  experience       Int          @default(0)
+  budgetCtc        Float?
+  benchmark        String       @default("CBSE")
+  status           String       @default("ACTIVE")
+  organizationId   String
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  shortlists       Shortlist[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+model Candidate {
+  id             String          @id @default(cuid())
+  name           String
+  email          String
+  phone          String?
+  linkedinUrl    String?
+  cvFileName     String?
+  cvText         String?
+  rawData        String?
+  currentCtc     Float?
+  expectedCtc    Float?
+  organizationId String
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  evaluations    CandidateEval[]
+  shortlistItems ShortlistItem[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model CandidateEval {
+  id                 String    @id @default(cuid())
+  candidateId        String
+  positionId         String
+  overallScore       Float
+  qualificationScore Float
+  experienceScore    Float
+  subjectScore       Float
+  softSkillScore     Float
+  strengths          String
+  weaknesses         String
+  recommendation     String
+  meetsBenchmark     Boolean   @default(false)
+  aiSummary          String
+  rawEvaluation      String
+  candidate          Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  createdAt          DateTime  @default(now())
+}
+
+model Shortlist {
+  id             String        @id @default(cuid())
+  name           String
+  positionId     String
+  organizationId String
+  status         String        @default("ACTIVE")
+  position       Position      @relation(fields: [positionId], references: [id], onDelete: Cascade)
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  items          ShortlistItem[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model ShortlistItem {
+  id          String    @id @default(cuid())
+  shortlistId String
+  candidateId String
+  rank        Int       @default(0)
+  notes       String?
+  emailSent   Boolean   @default(false)
+  emailSentAt DateTime?
+  shortlist   Shortlist @relation(fields: [shortlistId], references: [id], onDelete: Cascade)
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@unique([shortlistId, candidateId])
+}
+
+model TestTemplate {
+  id             String         @id @default(cuid())
+  title          String
+  subject        String
+  gradeLevel     String
+  description    String?
+  questionTypes  String         // JSON array: ["MCQ","SHORT","LONG","TRUE_FALSE"]
+  totalQuestions Int
+  timeLimitMins  Int?           // null = no timer
+  passingScore   Int            @default(60)
+  status         String         @default("ACTIVE")
+  shareToken     String         @unique @default(cuid())
+  organizationId String
+  questions      TestQuestion[]
+  attempts       TestAttempt[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model TestQuestion {
+  id             String         @id @default(cuid())
+  templateId     String
+  type           String         // MCQ | SHORT | LONG | TRUE_FALSE
+  question       String
+  options        String?        // JSON array of 4 strings for MCQ
+  correctAnswer  String?        // for MCQ and TRUE_FALSE (auto-graded)
+  marks          Int            @default(1)
+  order          Int
+  template       TestTemplate   @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  responses      TestResponse[]
+}
+
+model TestAttempt {
+  id             String         @id @default(cuid())
+  templateId     String
+  teacherName    String
+  teacherEmail   String
+  teacherPhone   String?
+  candidateId    String?        // linked if teacher is already a candidate
+  status         String         @default("IN_PROGRESS") // IN_PROGRESS | SUBMITTED
+  totalScore     Float?
+  maxScore       Float?
+  percentage     Float?
+  passed         Boolean?
+  aiSummary      String?
+  startedAt      DateTime       @default(now())
+  submittedAt    DateTime?
+  template       TestTemplate   @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  responses      TestResponse[]
+}
+
+model TestResponse {
+  id         String       @id @default(cuid())
+  attemptId  String
+  questionId String
+  answer     String
+  score      Float?
+  aiFeedback String?
+  attempt    TestAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question   TestQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
