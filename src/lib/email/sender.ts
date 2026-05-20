@@ -1,7 +1,5 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 interface SendShortlistEmailParams {
   candidateName: string;
   candidateEmail: string;
@@ -14,6 +12,8 @@ interface SendShortlistEmailParams {
 }
 
 export async function sendShortlistEmail(params: SendShortlistEmailParams): Promise<void> {
+  if (!process.env.RESEND_API_KEY) throw new Error("RESEND_API_KEY is not configured");
+  const resend = new Resend(process.env.RESEND_API_KEY);
   const fromEmail = params.fromEmail || "noreply@yourschool.edu.in";
 
   const gradeLabelMap: Record<string, string> = {
