@@ -22,7 +22,8 @@
       "Bash(PORT=3000 npm run dev)",
       "Bash(echo \"new PID: $!\")",
       "Bash(npm list *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   }
 }
